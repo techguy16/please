@@ -1,0 +1,55 @@
+#!/bin/bash
+
+install () {
+    if command -v pacman > /dev/null; then
+        sudo pacman -S $1
+    elif command -v apt > /dev/null; then
+        sudo apt install $1
+    elif command -v dnf > /dev/null; then
+        sudo dnf install $1
+    elif command -v yum > /dev/null; then
+        sudo yum install $1
+    else
+        echo "Your system is not currently supported by please's install function"
+    fi
+}
+
+uninstall () {
+    if command -v pacman > /dev/null; then
+        sudo pacman -R $1
+    elif command -v apt > /dev/null; then
+        sudo apt remove $1
+    elif command -v dnf > /dev/null; then
+        sudo dnf remove $1
+    elif command -v yum > /dev/null; then
+        sudo yum remove $1
+    else
+        echo "Your system is not currently supported by please's install function"
+    fi
+}
+
+if [[ $1 == "install" ]]; then
+    install $2
+elif [[ $1 == "uninstall" ]]; then
+    uninstall $2
+elif [[ $1 == "remove" ]]; then
+    if [[ -f $2 ]]; then
+        rm $2
+    else
+        uninstall $2
+    fi
+elif [[ $1 == "create" ]]; then
+    touch $2
+elif [[ $1 == "send" ]]; then
+    if [[ $4 == "distro" ]]; then
+        if ! [[ $2 == "myself" ]]; then
+            uname -a | write $2
+        else
+            uname -a
+        fi
+    else
+        echo "invalid send"
+    fi
+else
+    echo "Invalid command: $1"
+fi
